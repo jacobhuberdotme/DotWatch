@@ -4,6 +4,7 @@
 ## Version: 1.0
 
 constants/spells.lua
+constants/power_colors.lua
 ui/frame.lua
 core/tracker.lua
 DotWatch.lua

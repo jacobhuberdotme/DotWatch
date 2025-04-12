@@ -19,6 +19,13 @@ function CreateDotWatchFrame()
     frame.healthBar:SetHeight(frame.iconSize / 5)
     frame.healthBar:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
     frame.healthBar:SetStatusBarColor(0.6, 1.0, 0.6)
+
+    frame.healthText = frame.healthBar:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    frame.healthText:SetPoint("CENTER", frame.healthBar, "CENTER", 0, 0)
+    frame.healthText:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
+    frame.healthText:SetJustifyH("CENTER")
+    frame.healthText:SetJustifyV("MIDDLE")
+    frame.healthText:SetText("")
   
     frame.powerBar = CreateFrame("StatusBar", nil, frame)
     frame.powerBar:SetPoint("TOPLEFT", frame.healthBar, "BOTTOMLEFT", 0, -2)

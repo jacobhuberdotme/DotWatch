@@ -7,7 +7,7 @@ function SetupTracker(frame)
 
   frame.powerBar:SetPoint("TOPLEFT", frame.healthBar, "BOTTOMLEFT", 0, -2)
   frame.powerBar:SetPoint("TOPRIGHT", frame.healthBar, "BOTTOMRIGHT", 0, -2)
-  frame.powerBar:SetHeight(frame.iconSize / 5)
+  frame.powerBar:SetHeight(frame.iconSize / 6)
 
   local function updateDots()
     local unit = "target"
@@ -18,7 +18,7 @@ function SetupTracker(frame)
     local currentUnit = nil
     for _, u in ipairs({ "target", "focus", "mouseover" }) do
       if UnitExists(u) and UnitGUID(u) == lastTargetGUID and not UnitIsFriend("player", u) then
-        currentUnit = u
+          currentUnit = u
         break
       end
     end
@@ -33,14 +33,16 @@ function SetupTracker(frame)
     frame.healthBar:SetMinMaxValues(0, healthMax)
     frame.healthBar:SetValue(health)
 
+    if frame.healthText then
+      local unitName = UnitName(currentUnit) or ""
+      local isPlayer = UnitIsPlayer(currentUnit)
+      frame.healthText:SetText(string.format("%d", health))
+      frame.healthText:SetDrawLayer("OVERLAY", 7)
+    end
+
     local power, powerMax = UnitPower(currentUnit), UnitPowerMax(currentUnit)
     local _, powerTypeToken = UnitPowerType(currentUnit)
-    local powerColors = {
-        MANA   = { r = 0.6, g = 0.8, b = 1.0 },
-        RAGE   = { r = 1.0, g = 0.6, b = 0.6 },
-        ENERGY = { r = 1.0, g = 1.0, b = 0.6 },
-      }
-      local color = powerColors[powerTypeToken] or { r = 0.8, g = 0.8, b = 0.8 }
+    local color = PowerColors[powerTypeToken] or { r = 0.8, g = 0.8, b = 0.8 }
 
     frame.powerBar:SetMinMaxValues(0, powerMax)
     frame.powerBar:SetValue(power)
