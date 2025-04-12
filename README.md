@@ -2,6 +2,8 @@
 
 **DotWatch** is a minimalist World of Warcraft addon for tracking your DoTs (Damage over Time spells) on your last targeted enemy. Built for Affliction Warlocks in WoW Classic, it provides a clean visual display to keep you informed and efficient in combat.
 
+<img width="1200" alt="DotWatch UI display in game" src="https://github.com/user-attachments/assets/4a849518-f87a-44d0-817d-f39ac21cb8cf" />
+
 ---
 
 ## ✨ Features
@@ -12,7 +14,7 @@
   - Curse of Agony
   - Immolate
 - Only shows the last valid non-friendly target (even if deselected)
-- Shows countdown timers for DoTs with less than 10 seconds left
+- Shows countdown timers for DoTs with less than 8 seconds left
 - Displays enemy health and mana/rage/energy bars
 - Clean, centered UI with pastel color-coded DoTs
 - Performance-optimized: updates only while in combat
