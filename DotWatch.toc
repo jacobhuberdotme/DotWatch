@@ -7,4 +7,6 @@ constants/spells.lua
 constants/power_colors.lua
 ui/frame.lua
 core/tracker.lua
+core/playertracker.lua
+core/ui.lua
 DotWatch.lua

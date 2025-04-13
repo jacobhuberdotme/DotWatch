@@ -1,5 +1,11 @@
 local lastTargetGUID = nil
 
+PlayerFrame:UnregisterAllEvents()
+PlayerFrame:Hide()
+hooksecurefunc(PlayerFrame, "Show", function(self)
+    self:Hide()
+end)
+
 function SetupTracker(frame)
   frame.healthBar:SetPoint("TOPLEFT", frame, "TOPLEFT", 2, -2)
   frame.healthBar:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -2, -2)
@@ -8,6 +14,13 @@ function SetupTracker(frame)
   frame.powerBar:SetPoint("TOPLEFT", frame.healthBar, "BOTTOMLEFT", 0, -2)
   frame.powerBar:SetPoint("TOPRIGHT", frame.healthBar, "BOTTOMRIGHT", 0, -2)
   frame.powerBar:SetHeight(frame.iconSize / 6)
+
+  frame.buffText = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  frame.buffText:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -1, 1)
+  frame.buffText:SetFont("Fonts\\FRIZQT__.TTF", 8, "OUTLINE")
+  frame.buffText:SetJustifyH("RIGHT")
+  frame.buffText:SetText("")
+  frame.buffText:SetTextColor(1, 0, 0, 1)
 
   local function updateDots()
     local unit = "target"
@@ -34,8 +47,6 @@ function SetupTracker(frame)
     frame.healthBar:SetValue(health)
 
     if frame.healthText then
-      local unitName = UnitName(currentUnit) or ""
-      local isPlayer = UnitIsPlayer(currentUnit)
       frame.healthText:SetText(string.format("%d", health))
       frame.healthText:SetDrawLayer("OVERLAY", 7)
     end
