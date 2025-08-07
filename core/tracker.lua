@@ -1,10 +1,5 @@
 local lastTargetGUID = nil
 
-PlayerFrame:UnregisterAllEvents()
-PlayerFrame:Hide()
-hooksecurefunc(PlayerFrame, "Show", function(self)
-    self:Hide()
-end)
 
 function SetupTracker(frame)
   frame.healthBar:SetPoint("TOPLEFT", frame, "TOPLEFT", 2, -2)
@@ -59,21 +54,53 @@ function SetupTracker(frame)
     frame.powerBar:SetValue(power)
     frame.powerBar:SetStatusBarColor(color.r, color.g, color.b)
 
-    for spellId, i in pairs(DOTS) do
-      local auraName = GetSpellInfo(spellId)
-      local name, _, _, _, duration, expirationTime, source = AuraUtil.FindAuraByName(auraName, currentUnit, "HARMFUL")
-      if name and source == "player" and duration and expirationTime then
-        local timeLeft = expirationTime - GetTime()
-        local color = DotColors[spellId] or { r = 0.5, g = 0.5, b = 0.5 }
-        frame.dots[i]:SetColorTexture(color.r, color.g, color.b)
-        if timeLeft > 0 and timeLeft < 8 then
-          frame.dots[i].text:SetText(string.format("%.0f", timeLeft))
-        else
-          frame.dots[i].text:SetText("")
+    -- Safety: constants not loaded yet? bail gracefully
+    if type(DOTS_BY_NAME) ~= "table" or type(DotColorsByName) ~= "table" then
+      if frame.buffText then frame.buffText:SetText("[DotWatch] constants not loaded") end
+      return
+    end
+
+        -- Clear once at start of pass
+    for idx = 1, 4 do
+      frame.dots[idx]:SetColorTexture(0.2, 0.2, 0.2)
+      frame.dots[idx].text:SetText("")
+    end
+
+    local slotSet = { [1]=false, [2]=false, [3]=false, [4]=false }
+
+    -- Name-based matches; do not gray-out on misses
+    for auraName, slot in pairs(DOTS_BY_NAME) do
+      if not slotSet[slot] then
+        local name, _, _, _, duration, expirationTime, source = AuraUtil.FindAuraByName(auraName, currentUnit, "HARMFUL")
+        if name and source == "player" and duration and expirationTime then
+          local timeLeft = expirationTime - GetTime()
+          local color = DotColorsByName[auraName] or { r = 0.5, g = 0.5, b = 0.5 }
+          frame.dots[slot]:SetColorTexture(color.r, color.g, color.b)
+          if timeLeft > 0 and timeLeft < 8 then
+            frame.dots[slot].text:SetText(string.format("%.0f", timeLeft))
+          end
+          slotSet[slot] = true
         end
-      else
-        frame.dots[i]:SetColorTexture(0.2, 0.2, 0.2)
-        frame.dots[i].text:SetText("")
+      end
+    end
+
+    -- Fallback: if no specific curse matched, show any player-applied Curse in slot 3
+    if not slotSet[3] then
+      local i = 1
+      while true do
+        local name, _, _, debuffType, duration, expirationTime, source = UnitAura(currentUnit, i, "HARMFUL")
+        if not name then break end
+        if source == "player" and debuffType == "Curse" then
+          local timeLeft = (expirationTime and (expirationTime - GetTime())) or 0
+          local c = DotColorsByName[name] or DotColorsByName["Curse of Agony"] or { r=0.9, g=0.5, b=0.5 }
+          frame.dots[3]:SetColorTexture(c.r, c.g, c.b)
+          if timeLeft > 0 and timeLeft < 8 then
+            frame.dots[3].text:SetText(string.format("%.0f", timeLeft))
+          end
+          slotSet[3] = true
+          break
+        end
+        i = i + 1
       end
     end
   end
@@ -82,7 +109,8 @@ function SetupTracker(frame)
   f:RegisterEvent("PLAYER_TARGET_CHANGED")
   f:RegisterEvent("UNIT_AURA")
   f:SetScript("OnEvent", function(_, event, unit)
-    if event == "PLAYER_TARGET_CHANGED" or (event == "UNIT_AURA" and unit == "target") then
+    if event == "PLAYER_TARGET_CHANGED" 
+       or (event == "UNIT_AURA" and (unit == "target" or unit == "focus" or unit == "mouseover")) then
       updateDots()
     end
   end)

@@ -1,9 +1,4 @@
 local function DrawPlayerBox()
-    PlayerFrame:UnregisterAllEvents()
-    PlayerFrame:Hide()
-    hooksecurefunc(PlayerFrame, "Show", function(self)
-        self:Hide()
-    end)
 
     local ICON_SIZE = 40
     local frame = CreateFrame("Frame", "DotWatchPlayerFrame", UIParent, "BackdropTemplate")

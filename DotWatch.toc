@@ -1,7 +1,7 @@
 ## Interface: 11403
 ## Title: DotWatch
 ## Notes: Tracks your DoTs on your last targeted enemy
-## Version: 1.0
+## Version: 1.0.1
 
 constants/spells.lua
 constants/power_colors.lua

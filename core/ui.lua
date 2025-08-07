@@ -1,9 +1,4 @@
 local playerFrame = CreateFrame("Frame", "DotWatchPlayerFrame", UIParent, "BackdropTemplate")
-PlayerFrame:UnregisterAllEvents()
-PlayerFrame:Hide()
-hooksecurefunc(PlayerFrame, "Show", function(self)
-    self:Hide()
-end)
 playerFrame:SetSize(150, 40)
 playerFrame:SetPoint("TOP", DotWatchFrame, "BOTTOM", 0, -10)
 playerFrame:SetBackdrop({
